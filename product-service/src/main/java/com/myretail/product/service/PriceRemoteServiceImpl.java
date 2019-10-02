@@ -1,9 +1,13 @@
 package com.myretail.product.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.myretail.product.dto.PriceDto;
 
@@ -18,8 +22,12 @@ public class PriceRemoteServiceImpl implements PriceRemoteService {
 
 	@Override
 	public PriceDto apply(String id) {
-		final String id_url = url.replace("{productId}", id);
-		return restTemplate.getForEntity(id_url, PriceDto.class).getBody();
+		Map<String, String> urlParams = new HashMap<String, String>();
+		urlParams.put("productId", id);
+
+		// Query parameters
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+		return restTemplate.getForEntity(builder.buildAndExpand(urlParams).toUriString(),PriceDto.class).getBody();
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,11 +47,14 @@ public class ProduceNameRemoteServiceImpl implements ProductNameRemoteService {
 		String productName = null;
 		try {
 			productName = productCache.get(id);
+			if(StringUtils.isEmpty(productName)) {
+				return null;
+			}
+			return productName;
 		} catch (Exception ex) {
            final String message = String.format("Error %s in processing the request for %s ",ex.getMessage(),id);
            throw new InternalErrorException(message);
 		}
-		return productName;
 	}
 
 	private String getProductName(String id) throws IOException {
@@ -70,7 +74,7 @@ public class ProduceNameRemoteServiceImpl implements ProductNameRemoteService {
 				}
 			}
 		}
-		return null;
+		return "";
 	}
 
 }
